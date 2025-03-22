@@ -1,0 +1,93 @@
+---
+title: "Compost temperature data"
+message: false
+---
+
+```{r deps}
+library(tidyverse)
+library(googlesheets4)
+library(hms)
+library(patchwork)
+
+theme_sovacool <- ggplot2::theme_bw() +
+    ggplot2::theme(
+      legend.margin = ggplot2::margin(0, 0, 0, 0, unit = "pt"),
+      legend.box.margin = ggplot2::margin(0, 0, 0, 0, unit = "pt"),
+      plot.margin = ggplot2::margin(0, 0, 0, 0, unit = "pt")
+    )
+
+theme_set(theme_sovacool)
+```
+
+```{r data}
+weather_dat <- list.files('data', full.names=TRUE) %>% 
+  Filter(\(x) str_ends(x, '.csv'),.) %>% 
+  map(read_csv) %>% 
+  bind_rows() %>% 
+  distinct() %>% 
+  mutate(source_weather = 'NOAA')
+
+#gs4_auth()
+compost_dat <- read_sheet(
+  'https://docs.google.com/spreadsheets/d/1SQbtZQoU_YLeCF9Udu_SHTf0v5Cf-tgrrzdvb2Z2C94/edit?gid=0#gid=0'
+) %>%
+  mutate(
+    date = as_date(datetime),
+    drop = if_else(is.na(drop), FALSE, drop),
+    source_compost = 'KLSC',
+    compost_status = factor(
+      case_when(
+        compost_temp_F < 80 ~ 'dormant',
+        compost_temp_F >= 80 ~ 'steady',
+        compost_temp_F >= 100 ~ 'active',
+        compost_temp_F >= 130 ~ 'hot',
+        compost_temp_F >= 160 ~ 'too hot!'
+      ),
+      levels = c('dormant', 'steady', 'active', 'hot', 'too hot!8️')
+    )
+  ) %>%
+  filter(!drop)
+
+tz(compost_dat$datetime) <- 'America/Detroit'
+
+dat <- compost_dat %>% 
+  mutate(time_hms = as_hms(datetime)) %>% 
+  full_join(weather_dat, by = c('date' = 'DATE'))
+```
+
+```{r}
+dat %>% 
+  ggplot(aes(x = date, y = compost_temp_F)) +
+  geom_hline(yintercept = 32, linetype = 'dotted', linewidth = 0.3, color = 'lightblue') +
+  geom_ribbon(aes(x = date, ymax = TMAX, ymin = TMIN), alpha = 0.5, fill = 'darkgrey') +
+  geom_line(aes(y = TMIN, color = TMIN), linewidth = 1) +
+  geom_line(aes(y = TMAX, color = TMAX), linewidth = 1) +
+  geom_line(aes(group = source_compost), linewidth=0.5) +
+  geom_point(aes(fill = compost_status, group = source_compost), shape = 21, stroke = 0.5, size = 3) +
+  scale_fill_viridis_d() +
+  scale_color_viridis_c() +
+  labs(x = '', y = 'Temperature (Fahrenheit)', 
+       title = "Compost temperature vs Daily high/low air temperature")
+```
+
+```{r compost_temp}
+plot_temp <- dat %>% 
+  ggplot(aes(x = date, y = compost_temp_F)) +
+  geom_hline(yintercept = 32, linetype = 'dotted', linewidth = 0.3, color = 'lightblue') +
+  geom_ribbon(aes(x = date, ymax = TMAX, ymin = TMIN), alpha = 0.5, fill = 'darkgrey') +
+  geom_line(aes(color=compost_status, group = source_compost), linewidth=0.5) +
+  geom_point(aes(fill = compost_status, group = source_compost), shape = 21, stroke = 0.5, size = 3) +
+  scale_fill_viridis_d() +
+  scale_color_viridis_d() +
+  labs(x = '', y = 'Temperature (Fahrenheit)', 
+       title = "Compost temperature vs Daily high/low air temperature")
+
+plot_temp
+
+plot_obs_time <- dat %>% 
+  ggplot(aes(x = date, y = time_hms)) +
+  geom_point() +
+  labs(x = '', y = 'Compost Measurement Time')
+
+plot_temp / plot_obs_time
+```
