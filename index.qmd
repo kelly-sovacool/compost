@@ -1,6 +1,8 @@
 ---
 title: "Compost temperature data"
-message: false
+knitr:
+  opts_chunk:
+    message: false
 ---
 
 ```{r deps}
