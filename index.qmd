@@ -39,13 +39,13 @@ compost_dat <- read_sheet(
     source_compost = 'KLSC',
     compost_status = factor(
       case_when(
-        compost_temp_F < 80 ~ 'dormant',
-        compost_temp_F >= 80 ~ 'steady',
-        compost_temp_F >= 100 ~ 'active',
+        compost_temp_F >= 160 ~ 'too hot!',
         compost_temp_F >= 130 ~ 'hot',
-        compost_temp_F >= 160 ~ 'too hot!'
+        compost_temp_F >= 100 ~ 'active',
+        compost_temp_F >= 80 ~ 'steady',
+        compost_temp_F < 80 ~ 'dormant'
       ),
-      levels = c('dormant', 'steady', 'active', 'hot', 'too hot!8️')
+      levels = c('dormant', 'steady', 'active', 'hot', 'too hot!️')
     )
   ) %>%
   filter(!drop)
@@ -66,8 +66,9 @@ dat %>%
   geom_line(aes(y = TMAX, color = TMAX), linewidth = 1) +
   geom_line(aes(group = source_compost), linewidth=0.5) +
   geom_point(aes(fill = compost_status, group = source_compost), shape = 21, stroke = 0.5, size = 3) +
-  scale_fill_viridis_d() +
-  scale_color_viridis_c() +
+  scale_fill_viridis_d(guide = guide_legend(title = 'Compost status', reverse = TRUE), na.translate=FALSE) +
+  scale_color_viridis_c() + #guide = guide_legend(title = 'High/Low Air Temp F')) +
+  #guides(color = guide_legend(title = 'High/Low Air Temp F')) +
   labs(x = '', y = 'Temperature (Fahrenheit)', 
        title = "Compost temperature vs Daily high/low air temperature")
 ```
@@ -79,7 +80,9 @@ plot_temp <- dat %>%
   geom_ribbon(aes(x = date, ymax = TMAX, ymin = TMIN), alpha = 0.5, fill = 'darkgrey') +
   geom_line(aes(group = source_compost), linewidth=0.5, color = '#696969') +
   geom_point(aes(fill = compost_status, group = source_compost), color = '#696969', shape = 21, stroke = 0.5, size = 3) +
-  scale_fill_viridis_d() +
+  scale_fill_viridis_d(na.translate=FALSE,
+                       guide = guide_legend(reverse = TRUE, title = 'Compost status')
+                       ) +
   scale_color_viridis_d() +
   labs(x = '', y = 'Temperature (Fahrenheit)', 
        title = "Compost temperature vs Daily high/low air temperature")
