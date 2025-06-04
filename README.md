@@ -4,13 +4,19 @@ NOAA data docs: <https://www.ncei.noaa.gov/pub/data/cdo/documentation/GHCND_docu
 
 ### Downloaded weather data from NOAA
 
-The python noaa sdk can only get current observations, not historical observations. Have to manually download historical data.
+The python noaa sdk can only get current observations, not historical observations.
+Have to manually download historical data.
+
+GHCN data for the station at Detroit airport:
+<https://www.ncei.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USW00094847/detail>
 
 Select the station and click "Add to cart":
 
-![<https://www.ncei.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USW00094847/detail>](img/noaa_add-to-cart.png)
+![](img/noaa_add-to-cart.png)
 
-Select "daily summaries" and the desired date range, then click continue:
+Go to the cart,
+select "Custom GHCN-Daily CSV" and the desired date range,
+then click continue:
 
 ![](img/noaa_cart-daily-sums.png)
 

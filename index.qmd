@@ -77,8 +77,8 @@ plot_temp <- dat %>%
   ggplot(aes(x = date, y = compost_temp_F)) +
   geom_hline(yintercept = 32, linetype = 'dotted', linewidth = 0.3, color = 'lightblue') +
   geom_ribbon(aes(x = date, ymax = TMAX, ymin = TMIN), alpha = 0.5, fill = 'darkgrey') +
-  geom_line(aes(color=compost_status, group = source_compost), linewidth=0.5) +
-  geom_point(aes(fill = compost_status, group = source_compost), shape = 21, stroke = 0.5, size = 3) +
+  geom_line(aes(group = source_compost), linewidth=0.5, color = '#696969') +
+  geom_point(aes(fill = compost_status, group = source_compost), color = '#696969', shape = 21, stroke = 0.5, size = 3) +
   scale_fill_viridis_d() +
   scale_color_viridis_d() +
   labs(x = '', y = 'Temperature (Fahrenheit)', 
