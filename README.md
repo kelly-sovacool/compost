@@ -15,7 +15,8 @@ Select the station and click "Add to cart":
 ![](img/noaa_add-to-cart.png)
 
 Go to the cart,
-select "Custom GHCN-Daily CSV" and the desired date range,
+select "Custom GHCN-Daily CSV",
+select the desired date range (e.g. 2024-11-01 to latest available),
 then click continue:
 
 ![](img/noaa_cart-daily-sums.png)
