@@ -1,3 +1,11 @@
 project:
-  title: "compost dashboard"
+  type: website
   output-dir: docs/
+
+website:
+  title: "Compost dashboard"
+  site-url: https://sovacool.dev/compost
+  repo-url: https://github.com/kelly-sovacool/compost
+  repo-actions: [edit, issue]
+  google-analytics: "G-HKN2N6YZGT"
+  open-graph: true

@@ -37,3 +37,6 @@ Move any prior files to `data/archive/`.
 ```sh
 quarto render
 ```
+
+View the rendered report:
+<https://sovacool.dev/compost/>
