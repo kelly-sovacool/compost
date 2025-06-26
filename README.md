@@ -31,3 +31,9 @@ Review the order, enter your email, and submit it:
 
 Once the dataset arrives in your inbox, place it in `data/`.
 Move any prior files to `data/archive/`.
+
+## Render the report
+
+```sh
+quarto render
+```
