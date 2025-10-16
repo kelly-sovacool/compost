@@ -26,11 +26,11 @@ theme_set(theme_sovacool)
 ```
 
 ```{r data}
-weather_dat <- list.files('data', full.names=TRUE) %>% 
-  Filter(\(x) str_ends(x, '.csv'),.) %>% 
-  map(read_csv) %>% 
-  bind_rows() %>% 
-  distinct() %>% 
+weather_dat <- list.files('data', full.names=TRUE) %>%
+  Filter(\(x) str_ends(x, '.csv'),.) %>%
+  map(read_csv) %>%
+  bind_rows() %>%
+  distinct() %>%
   mutate(source_weather = 'NOAA')
 
 #gs4_auth()
@@ -56,13 +56,13 @@ compost_dat <- read_sheet(
 
 tz(compost_dat$datetime) <- 'America/Detroit'
 
-dat <- compost_dat %>% 
-  mutate(time_hms = as_hms(datetime)) %>% 
+dat <- compost_dat %>%
+  mutate(time_hms = as_hms(datetime)) %>%
   full_join(weather_dat, by = c('date' = 'DATE'))
 ```
 
 ```{r}
-dat %>% 
+dat %>%
   ggplot(aes(x = date, y = compost_temp_F)) +
   geom_hline(yintercept = 32, linetype = 'dotted', linewidth = 0.3, color = 'lightblue') +
   geom_ribbon(aes(x = date, ymax = TMAX, ymin = TMIN), alpha = 0.5, fill = 'darkgrey') +
@@ -73,12 +73,12 @@ dat %>%
   scale_fill_viridis_d(guide = guide_legend(title = 'Compost status', reverse = TRUE), na.translate=FALSE) +
   scale_color_viridis_c() + #guide = guide_legend(title = 'High/Low Air Temp F')) +
   #guides(color = guide_legend(title = 'High/Low Air Temp F')) +
-  labs(x = '', y = 'Temperature (Fahrenheit)', 
+  labs(x = '', y = 'Temperature (Fahrenheit)',
        title = "Compost temperature vs Daily high/low air temperature")
 ```
 
 ```{r compost_temp}
-plot_temp <- dat %>% 
+plot_temp <- dat %>%
   ggplot(aes(x = date, y = compost_temp_F)) +
   geom_hline(yintercept = 32, linetype = 'dotted', linewidth = 0.3, color = 'lightblue') +
   geom_ribbon(aes(x = date, ymax = TMAX, ymin = TMIN), alpha = 0.5, fill = 'darkgrey') +
@@ -88,12 +88,12 @@ plot_temp <- dat %>%
                        guide = guide_legend(reverse = TRUE, title = 'Compost status')
                        ) +
   scale_color_viridis_d() +
-  labs(x = '', y = 'Temperature (Fahrenheit)', 
+  labs(x = '', y = 'Temperature (Fahrenheit)',
        title = "Compost temperature vs Daily high/low air temperature")
 
 plot_temp
 
-plot_obs_time <- dat %>% 
+plot_obs_time <- dat %>%
   ggplot(aes(x = date, y = time_hms)) +
   geom_point() +
   labs(x = '', y = 'Compost Measurement Time')
